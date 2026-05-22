@@ -21,7 +21,7 @@ formLogin.addEventListener("submit", (event) => {
     localStorage.setItem("colaboradorLogado", "true");
     localStorage.setItem("colaboradorMatricula", matriculaDigitada);
 
-    window.location.href = "../01_HOME/painel.html";
+    window.location.href = "./01_HOME/painel.html";
     return;
   }
 
