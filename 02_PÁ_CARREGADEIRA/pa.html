@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checklist Pá Carregadeira</title>
+
+    <link rel="stylesheet" href="./css/pa.css" />
+  </head>
+
+  <body>
+    <main class="checklist-container">
+      <header class="checklist-header">
+        <img src="./01_HOME/img/Logo_AGM.png" alt="Logo AGM" />
+        <div>
+          <h1>Checklist Pá Carregadeira</h1>
+          <p>Código: 001 • Revisão: 00</p>
+        </div>
+      </header>
+
+      <section class="dados-card">
+        <h2>Dados do Checklist</h2>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Marca / Modelo</label>
+            <input type="text" id="modelo" placeholder="Ex: Pá Carregadeira XCMG" />
+          </div>
+
+          <div class="form-group">
+            <label>Operador</label>
+            <input type="text" id="operador" placeholder="Nome do operador" />
+          </div>
+
+          <div class="form-group">
+            <label>Data</label>
+            <input type="date" id="data" />
+          </div>
+
+          <div class="form-group">
+            <label>Turno</label>
+            <select id="turno">
+              <option value="">Selecione</option>
+              <option value="A">Turno A</option>
+              <option value="B">Turno B</option>
+              <option value="C">Turno C</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <form id="formChecklist">
+        <section class="grupo">
+          <h2>Sistema Elétrico</h2>
+          <div id="sistemaEletrico"></div>
+        </section>
+
+        <section class="grupo">
+          <h2>Sistema Hidráulico</h2>
+          <div id="sistemaHidraulico"></div>
+        </section>
+
+        <section class="grupo">
+          <h2>Estrutura Física</h2>
+          <div id="estruturaFisica"></div>
+        </section>
+
+        <section class="grupo">
+          <h2>Motor</h2>
+          <div id="motor"></div>
+        </section>
+
+        <section class="grupo">
+          <h2>Pneu</h2>
+          <div id="pneu"></div>
+        </section>
+
+        <section class="grupo critico">
+          <h2>Itens de Segurança</h2>
+          <div id="itensSeguranca"></div>
+        </section>
+
+        <section class="observacao-card">
+          <label>Observações gerais</label>
+          <textarea id="observacoes" placeholder="Descreva observações, não conformidades ou detalhes importantes..."></textarea>
+        </section>
+
+        <div class="status-operacao">
+          <label>
+            <input type="radio" name="condicaoOperacao" value="Em condições de operar" />
+            Em condições de operar
+          </label>
+
+          <label>
+            <input type="radio" name="condicaoOperacao" value="Sem condições de operar" />
+            Sem condições de operar
+          </label>
+        </div>
+
+        <button type="submit" class="btn-enviar">Enviar Checklist</button>
+      </form>
+    </main>
+
+    <script type="module" src="./js/pa.js"></script>
+  </body>
+</html>
