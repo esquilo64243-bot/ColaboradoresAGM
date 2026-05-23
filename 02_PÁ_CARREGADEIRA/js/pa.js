@@ -15,6 +15,8 @@ const grupos = {
     "Pisca alerta",
     "Sistema de partida e bateria",
     "Indicador de temperatura",
+
+    "Indicador de combustível",
     "Indicador de combustível",
   ],
 
@@ -23,6 +25,8 @@ const grupos = {
     "Mangueiras em geral",
     "Vazamento de óleo",
     "Cilindro de elevação",
+
+    "Nível óleo transmissão",
     "Nível óleo transmissão",
   ],
 
@@ -31,6 +35,8 @@ const grupos = {
     "Apresenta deformação na lataria?",
     "Todos os vidros em condições?",
     "Limpador de para-brisa em condições?",
+
+    "Lubrificação pinos articulados / possíveis folgas?",
     "Lubrificação pinos articulados / possíveis folgas?",
   ],
 
@@ -38,11 +44,15 @@ const grupos = {
     "Nível de óleo do motor",
     "Vazamento no motor",
     "Limpeza do radiador",
+
+    "Nível do reservatório",
     "Nível do reservatório",
   ],
 
   pneu: [
     "Calibração pneus dianteiros e conservação",
+
+    "Calibração pneus traseiros e conservação",
     "Calibração pneus traseiros e conservação",
   ],
 
@@ -154,6 +164,7 @@ formChecklist.addEventListener("submit", async (event) => {
   const condicaoOperacao =
     document.querySelector("input[name='condicaoOperacao']:checked")?.value ||
     "";
+  document.querySelector("input[name='condicaoOperacao']:checked")?.value || "";
 
   const checklist = {
     tipo: "Pá Carregadeira",
@@ -164,6 +175,8 @@ formChecklist.addEventListener("submit", async (event) => {
     observacoes: document.getElementById("observacoes").value.trim(),
     condicaoOperacao,
     respostas,
+
+    criadoEm: serverTimestamp(),
     criadoEm: serverTimestamp(),
   };
 
