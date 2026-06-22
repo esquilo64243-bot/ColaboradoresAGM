@@ -18,28 +18,28 @@
         </div>
       </header>
 
-      <section class="dados-card">
+          <section class="dados-card">
         <h2>Dados do Checklist</h2>
 
         <div class="form-grid">
           <div class="form-group">
             <label>Marca / Modelo</label>
-            <input type="text" id="modelo" placeholder="Ex: Pá Carregadeira XCMG" />
+            <input type="text" id="modelo" placeholder="Ex: Pá Carregadeira XCMG" required/>
           </div>
 
           <div class="form-group">
             <label>Operador</label>
-            <input type="text" id="operador" placeholder="Nome do operador" />
+            <input type="text" id="operador" placeholder="Nome do operador" required/>
           </div>
 
           <div class="form-group">
             <label>Data</label>
-            <input type="date" id="data" />
+            <input type="date" id="data" required/>
           </div>
 
           <div class="form-group">
             <label>Turno</label>
-            <select id="turno">
+            <select id="turno" required>
               <option value="">Selecione</option>
               <option value="A">Turno A</option>
               <option value="B">Turno B</option>
@@ -87,19 +87,44 @@
 
         <div class="status-operacao">
           <label>
-            <input type="radio" name="condicaoOperacao" value="Em condições de operar" />
+            <input type="radio" name="condicaoOperacao" value="Em condições de operar" required/>
             Em condições de operar
           </label>
 
           <label>
-            <input type="radio" name="condicaoOperacao" value="Sem condições de operar" />
+            <input type="radio" name="condicaoOperacao" value="Sem condições de operar"/>
             Sem condições de operar
           </label>
         </div>
 
         <button type="submit" class="btn-enviar">Enviar Checklist</button>
       </form>
+        </form>
     </main>
+
+    <div id="modalAssinatura" class="modal">
+  <div class="modal-content assinatura-box">
+
+    <h2>Assinatura do Colaborador</h2>
+
+    <canvas id="canvasAssinatura"></canvas>
+
+    <div class="botoes-assinatura">
+      <button id="limparAssinatura" type="button">Limpar</button>
+      <button id="confirmarAssinatura" type="button">Confirmar</button>
+    </div>
+
+  </div>
+</div>
+
+    <div id="modalAviso" class="modal">
+  <div class="modal-content">
+    <h2 id="modalTitulo">Aviso</h2>
+    <p id="modalTexto"></p>
+
+    <button id="fecharModal">OK</button>
+  </div>
+</div>
 
     <script type="module" src="./js/pa.js"></script>
   </body>

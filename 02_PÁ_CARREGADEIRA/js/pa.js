@@ -15,8 +15,6 @@ const grupos = {
     "Pisca alerta",
     "Sistema de partida e bateria",
     "Indicador de temperatura",
-
-    "Indicador de combustível",
     "Indicador de combustível",
   ],
 
@@ -25,8 +23,6 @@ const grupos = {
     "Mangueiras em geral",
     "Vazamento de óleo",
     "Cilindro de elevação",
-
-    "Nível óleo transmissão",
     "Nível óleo transmissão",
   ],
 
@@ -35,8 +31,6 @@ const grupos = {
     "Apresenta deformação na lataria?",
     "Todos os vidros em condições?",
     "Limpador de para-brisa em condições?",
-
-    "Lubrificação pinos articulados / possíveis folgas?",
     "Lubrificação pinos articulados / possíveis folgas?",
   ],
 
@@ -46,13 +40,11 @@ const grupos = {
     "Limpeza do radiador",
 
     "Nível do reservatório",
-    "Nível do reservatório",
   ],
 
   pneu: [
     "Calibração pneus dianteiros e conservação",
 
-    "Calibração pneus traseiros e conservação",
     "Calibração pneus traseiros e conservação",
   ],
 
@@ -77,7 +69,7 @@ function criarItem(nomeGrupo, texto, index) {
 
         <div class="opcoes">
           <label>
-            <input type="radio" name="${idBase}" value="C" />
+            <input type="radio" name="${idBase}" value="C" required/>
             <span>C</span>
           </label>
 
@@ -99,6 +91,28 @@ function criarItem(nomeGrupo, texto, index) {
     </div>
   `;
 }
+
+const modal = document.getElementById("modalAviso");
+const modalTexto = document.getElementById("modalTexto");
+const fecharModal = document.getElementById("fecharModal");
+
+function abrirModal(mensagem, titulo = "Aviso") {
+  document.getElementById("modalTitulo").innerText = titulo;
+  modalTexto.innerText = mensagem;
+  modal.style.display = "flex";
+}
+
+function fechar() {
+  modal.style.display = "none";
+}
+
+fecharModal.addEventListener("click", fechar);
+
+window.addEventListener("click", (e) => {
+  if (e.target === modal) {
+    fechar();
+  }
+});
 
 Object.entries(grupos).forEach(([grupo, itens]) => {
   const container = document.getElementById(grupo);
@@ -139,10 +153,15 @@ document.addEventListener("click", (event) => {
   }
 });
 
-const formChecklist = document.getElementById("formChecklist");
+
 
 formChecklist.addEventListener("submit", async (event) => {
   event.preventDefault();
+
+  if (!formChecklist.checkValidity()) {
+  formChecklist.reportValidity();
+  return;
+}
 
   const respostas = [];
 
@@ -164,7 +183,6 @@ formChecklist.addEventListener("submit", async (event) => {
   const condicaoOperacao =
     document.querySelector("input[name='condicaoOperacao']:checked")?.value ||
     "";
-  document.querySelector("input[name='condicaoOperacao']:checked")?.value || "";
 
   const checklist = {
     tipo: "Pá Carregadeira",
@@ -177,13 +195,12 @@ formChecklist.addEventListener("submit", async (event) => {
     respostas,
 
     criadoEm: serverTimestamp(),
-    criadoEm: serverTimestamp(),
   };
 
   try {
     await addDoc(collection(db, "checklists"), checklist);
 
-    alert("Checklist enviado com sucesso!");
+    abrirModal("Checklist enviado com sucesso!", "Sucesso");
 
     formChecklist.reset();
 
@@ -192,6 +209,6 @@ formChecklist.addEventListener("submit", async (event) => {
     });
   } catch (erro) {
     console.error("Erro ao enviar checklist:", erro);
-    alert("Erro ao enviar checklist. Veja o console.");
+    abrirModal("Erro ao enviar checklist. Veja o console.", "Erro");
   }
 });
