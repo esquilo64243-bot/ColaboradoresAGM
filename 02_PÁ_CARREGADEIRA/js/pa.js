@@ -6,6 +6,8 @@ import {
   serverTimestamp,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
+let checklistPendente = null;
+
 const grupos = {
   sistemaEletrico: [
     "Luz dianteira",
@@ -153,15 +155,15 @@ document.addEventListener("click", (event) => {
   }
 });
 
-
+const formChecklist = document.getElementById("formChecklist");
 
 formChecklist.addEventListener("submit", async (event) => {
   event.preventDefault();
 
   if (!formChecklist.checkValidity()) {
-  formChecklist.reportValidity();
-  return;
-}
+    formChecklist.reportValidity();
+    return;
+  }
 
   const respostas = [];
 
@@ -171,7 +173,8 @@ formChecklist.addEventListener("submit", async (event) => {
     const resposta =
       item.querySelector("input[type='radio']:checked")?.value || "";
 
-    const observacao = item.querySelector("textarea")?.value.trim() || "";
+    const observacao =
+      item.querySelector("textarea")?.value.trim() || "";
 
     respostas.push({
       pergunta,
@@ -181,10 +184,11 @@ formChecklist.addEventListener("submit", async (event) => {
   });
 
   const condicaoOperacao =
-    document.querySelector("input[name='condicaoOperacao']:checked")?.value ||
-    "";
+    document.querySelector(
+      "input[name='condicaoOperacao']:checked"
+    )?.value || "";
 
-  const checklist = {
+  checklistPendente = {
     tipo: "Pá Carregadeira",
     modelo: document.getElementById("modelo").value.trim(),
     operador: document.getElementById("operador").value.trim(),
@@ -193,22 +197,165 @@ formChecklist.addEventListener("submit", async (event) => {
     observacoes: document.getElementById("observacoes").value.trim(),
     condicaoOperacao,
     respostas,
-
-    criadoEm: serverTimestamp(),
   };
 
-  try {
-    await addDoc(collection(db, "checklists"), checklist);
-
-    abrirModal("Checklist enviado com sucesso!", "Sucesso");
-
-    formChecklist.reset();
-
-    document.querySelectorAll(".item-check").forEach((item) => {
-      item.classList.remove("nao-conforme");
-    });
-  } catch (erro) {
-    console.error("Erro ao enviar checklist:", erro);
-    abrirModal("Erro ao enviar checklist. Veja o console.", "Erro");
-  }
+  abrirAssinatura();
 });
+
+/* Assinatura */
+
+const modalAssinatura = document.getElementById("modalAssinatura");
+const canvas = document.getElementById("canvasAssinatura");
+const ctx = canvas.getContext("2d");
+
+let desenhando = false;
+
+// ajustar tamanho real do canvas
+function resizeCanvas() {
+  canvas.width = canvas.offsetWidth;
+  canvas.height = canvas.offsetHeight;
+}
+resizeCanvas();
+
+window.addEventListener("resize", resizeCanvas);
+
+// começar desenho
+canvas.addEventListener("mousedown", (e) => {
+  desenhando = true;
+  ctx.beginPath();
+  ctx.moveTo(e.offsetX, e.offsetY);
+});
+
+// desenhar
+canvas.addEventListener("mousemove", (e) => {
+  if (!desenhando) return;
+
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+  ctx.strokeStyle = "#000";
+
+  ctx.lineTo(e.offsetX, e.offsetY);
+  ctx.stroke();
+});
+
+// parar desenho
+window.addEventListener("mouseup", () => {
+  desenhando = false;
+});
+
+// celular
+
+function getTouchPos(canvas, touch) {
+  const rect = canvas.getBoundingClientRect();
+
+  return {
+    x: touch.clientX - rect.left,
+    y: touch.clientY - rect.top,
+  };
+}
+
+canvas.addEventListener("touchstart", (e) => {
+  e.preventDefault();
+
+  desenhando = true;
+
+  const pos = getTouchPos(canvas, e.touches[0]);
+
+  ctx.beginPath();
+  ctx.moveTo(pos.x, pos.y);
+});
+
+canvas.addEventListener("touchmove", (e) => {
+  e.preventDefault();
+
+  if (!desenhando) return;
+
+  const pos = getTouchPos(canvas, e.touches[0]);
+
+  ctx.lineWidth = 2;
+  ctx.lineCap = "round";
+
+  ctx.lineTo(pos.x, pos.y);
+  ctx.stroke();
+});
+
+canvas.addEventListener("touchend", () => {
+  desenhando = false;
+});
+
+// limpar
+document.getElementById("limparAssinatura").addEventListener("click", () => {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+});
+
+function abrirAssinatura() {
+  modalAssinatura.style.display = "flex";
+}
+
+// fechar modal
+function fecharAssinatura() {
+  modalAssinatura.style.display = "none";
+}
+
+document
+  .getElementById("confirmarAssinatura")
+  .addEventListener("click", async () => {
+    const pixels = ctx.getImageData(
+  0,
+  0,
+  canvas.width,
+  canvas.height
+).data;
+
+const canvasVazio = !pixels.some(
+  (valor, indice) => indice % 4 === 3 && valor !== 0
+);
+
+if (canvasVazio) {
+  abrirModal(
+    "Assine antes de confirmar.",
+    "Assinatura obrigatória"
+  );
+  return;
+}
+
+    const assinaturaBase64 = canvas.toDataURL("image/png");
+
+    checklistPendente.assinatura = assinaturaBase64;
+    checklistPendente.criadoEm = serverTimestamp();
+
+    try {
+
+      await addDoc(
+        collection(db, "checklists"),
+        checklistPendente
+      );
+
+      fecharAssinatura();
+
+      abrirModal(
+        "Checklist enviado com sucesso!",
+        "Sucesso"
+      );
+
+      formChecklist.reset();
+
+      ctx.clearRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+      );
+
+      checklistPendente = null;
+
+    } catch (erro) {
+
+      console.error(erro);
+
+      abrirModal(
+        "Erro ao enviar checklist.",
+        "Erro"
+      );
+    }
+  });
